@@ -1,0 +1,28 @@
+---
+import { news } from '../data/news';
+import { site } from '../data/site';
+---
+
+<footer class="site-footer">
+  <div class="container footer-grid">
+    <section>
+      <h3>What's New</h3>
+      <div class="footer-board">
+        <ul>
+          {news.map((item) => (
+            <li><a href={item.href}>{item.date} {item.text}</a></li>
+          ))}
+        </ul>
+      </div>
+    </section>
+    <section>
+      <h3>Twitter</h3>
+      <p>
+        <a href={site.twitter.url} target="_blank" rel="noopener">
+          <i class="fa fa-twitter" aria-hidden="true"></i> {site.twitter.handle}
+        </a>
+      </p>
+    </section>
+  </div>
+  <p class="copyright">&copy; {new Date().getFullYear()} {site.name}</p>
+</footer>

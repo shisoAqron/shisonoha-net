@@ -1,0 +1,30 @@
+---
+import { getCollection } from 'astro:content';
+import Layout from '../layouts/Layout.astro';
+import Carousel from '../components/Carousel.astro';
+import { homeTiles } from '../data/home';
+
+const entries = (await getCollection('portfolio'))
+  .filter((e) => e.data.homeOrder !== undefined)
+  .sort((a, b) => a.data.homeOrder! - b.data.homeOrder!);
+
+const items = entries.map((e) => ({ slug: e.id, title: e.data.title, thumbnail: e.data.thumbnail }));
+---
+
+<Layout>
+  <h3 class="home-title">これまでの研究・活動</h3>
+  <Carousel items={items} />
+  <div class="home-tiles">
+    {homeTiles.map((t) => (
+      <a
+        href={t.href}
+        title={t.title}
+        {...(t.external ? { target: '_blank', rel: 'noopener' } : {})}
+      >
+        <i class={`fa ${t.icon}`} aria-hidden="true"></i>
+        <h4>{t.title}</h4>
+        <p>{t.description}</p>
+      </a>
+    ))}
+  </div>
+</Layout>

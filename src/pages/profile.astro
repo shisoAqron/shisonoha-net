@@ -1,0 +1,38 @@
+---
+import Layout from '../layouts/Layout.astro';
+import { basicInfo, name, photo, sections } from '../data/profile';
+---
+
+<Layout title="Profile">
+  <div class="profile-cell">
+    <img class="profile-img" src={photo} alt={name.ja} width="300" height="300" />
+    <div class="main-info">
+      <h3>{name.ja}</h3>
+      <ul>
+        {basicInfo.map((item) => (
+          <li>
+            {item.icon && <i class={`fa ${item.icon}`} aria-hidden="true" />}
+            {item.text?.split('\n').map((line, i) => (i === 0 ? line : [<br />, line]))}
+            {item.links?.map((l, i) => (
+              <>{i > 0 && ', '}<a href={l.href} target="_blank" rel="noopener">{l.label}</a></>
+            ))}
+          </li>
+        ))}
+      </ul>
+    </div>
+  </div>
+
+  {sections.map((s) => {
+    const List = s.ordered ? 'ol' : 'ul';
+    return (
+      <div class="profile-others">
+        <h4>{s.title}</h4>
+        <List>
+          {s.items.map((it) => (
+            <li>{typeof it === 'string' ? it : <a href={it.href}>{it.label}</a>}</li>
+          ))}
+        </List>
+      </div>
+    );
+  })}
+</Layout>

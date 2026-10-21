@@ -1,0 +1,15 @@
+---
+import { getCollection } from 'astro:content';
+import Layout from '../../layouts/Layout.astro';
+import PortfolioCard from '../../components/PortfolioCard.astro';
+
+const entries = (await getCollection('portfolio')).sort((a, b) => a.data.order - b.data.order);
+---
+
+<Layout title="Portfolio">
+  <div class="portfolio-grid">
+    {entries.map((e) => (
+      <PortfolioCard slug={e.id} title={e.data.title} thumbnail={e.data.thumbnail} size={269} />
+    ))}
+  </div>
+</Layout>

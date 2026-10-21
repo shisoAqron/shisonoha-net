@@ -1,0 +1,22 @@
+---
+import { getCollection } from 'astro:content';
+import Layout from '../../layouts/Layout.astro';
+import PortfolioCard from '../../components/PortfolioCard.astro';
+
+export function getStaticPaths() {
+  return [{ params: { type: 'research' } }, { params: { type: 'activity' } }];
+}
+
+const { type } = Astro.params;
+const entries = (await getCollection('portfolio'))
+  .filter((e) => e.data.type === type)
+  .sort((a, b) => a.data.order - b.data.order);
+---
+
+<Layout title={type === 'research' ? 'Research' : 'Activity'}>
+  <div class="portfolio-grid">
+    {entries.map((e) => (
+      <PortfolioCard slug={e.id} title={e.data.title} thumbnail={e.data.thumbnail} size={269} />
+    ))}
+  </div>
+</Layout>

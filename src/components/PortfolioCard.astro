@@ -1,0 +1,18 @@
+---
+interface Props {
+  slug: string;
+  title: string;
+  thumbnail: string;
+  size: number;
+  showTitle?: boolean;
+}
+
+const { slug, title, thumbnail, size, showTitle = true } = Astro.props;
+---
+
+<div class="portfolio-item">
+  <a href={`/portfolio/${slug}/`} title={title} class="thumb">
+    <img src={thumbnail} width={size} height={size} alt="" loading="lazy" />
+  </a>
+  {showTitle && <a href={`/portfolio/${slug}/`} class="portfolio-title"><h5>{title}</h5></a>}
+</div>

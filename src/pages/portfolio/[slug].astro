@@ -1,0 +1,43 @@
+---
+import { getCollection, render } from 'astro:content';
+import Layout from '../../layouts/Layout.astro';
+
+export async function getStaticPaths() {
+  const entries = await getCollection('portfolio');
+  return entries.map((entry) => ({ params: { slug: entry.id }, props: { entry } }));
+}
+
+const { entry } = Astro.props;
+const all = (await getCollection('portfolio')).sort((a, b) => a.data.order - b.data.order);
+const idx = all.findIndex((e) => e.id === entry.id);
+const prev = all[idx - 1];
+const next = all[idx + 1];
+const { Content } = await render(entry);
+const { title, media } = entry.data;
+---
+
+<Layout title={title}>
+  <nav class="portfolio-nav" slot="header-actions" aria-label="ポートフォリオ内の移動">
+    {prev ? <a href={`/portfolio/${prev.id}/`} title={prev.data.title} aria-label="前へ"><i class="fa fa-chevron-left" aria-hidden="true"></i></a> : <span></span>}
+    <a href="/portfolio/" title="一覧へ" aria-label="一覧へ"><i class="fa fa-th" aria-hidden="true"></i></a>
+    {next ? <a href={`/portfolio/${next.id}/`} title={next.data.title} aria-label="次へ"><i class="fa fa-chevron-right" aria-hidden="true"></i></a> : <span></span>}
+  </nav>
+  <article class="portfolio-single">
+    <div class="portfolio-media">
+      {media.map((m) =>
+        m.type === 'video' ? (
+          <div class="videofit">
+            <iframe src={m.src} title={title} allowfullscreen loading="lazy"></iframe>
+          </div>
+        ) : m.href ? (
+          <a href={m.href} target="_blank" rel="noopener"><img src={m.src} alt={m.alt} /></a>
+        ) : (
+          <img src={m.src} alt={m.alt} />
+        ),
+      )}
+    </div>
+    <div class="portfolio-text entry-content">
+      <Content />
+    </div>
+  </article>
+</Layout>

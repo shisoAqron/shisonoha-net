@@ -1,0 +1,54 @@
+---
+import PortfolioCard from './PortfolioCard.astro';
+
+interface Item {
+  slug: string;
+  title: string;
+  thumbnail: string;
+}
+
+interface Props {
+  items: Item[];
+}
+
+const { items } = Astro.props;
+---
+
+<div class="carousel" data-carousel data-interval="9000">
+  <div class="carousel-track">
+    {items.map((item) => (
+      <div class="carousel-slide">
+        <PortfolioCard {...item} size={366} showTitle={false} />
+      </div>
+    ))}
+  </div>
+  <button type="button" class="carousel-btn prev" aria-label="前へ" data-dir="-1"><i class="fa fa-chevron-left" aria-hidden="true"></i></button>
+  <button type="button" class="carousel-btn next" aria-label="次へ" data-dir="1"><i class="fa fa-chevron-right" aria-hidden="true"></i></button>
+</div>
+
+<script>
+  document.querySelectorAll<HTMLElement>('[data-carousel]').forEach((root) => {
+    const track = root.querySelector<HTMLElement>('.carousel-track')!;
+    const interval = Number(root.dataset.interval) || 9000;
+
+    const step = () => track.querySelector<HTMLElement>('.carousel-slide')!.offsetWidth;
+    const move = (dir: number) => {
+      const atEnd = track.scrollLeft + track.clientWidth >= track.scrollWidth - 1;
+      if (dir > 0 && atEnd) track.scrollTo({ left: 0, behavior: 'smooth' });
+      else if (dir < 0 && track.scrollLeft <= 0) track.scrollTo({ left: track.scrollWidth, behavior: 'smooth' });
+      else track.scrollBy({ left: dir * step(), behavior: 'smooth' });
+    };
+
+    root.querySelectorAll<HTMLButtonElement>('.carousel-btn').forEach((btn) =>
+      btn.addEventListener('click', () => move(Number(btn.dataset.dir))),
+    );
+
+    if (matchMedia('(prefers-reduced-motion: reduce)').matches) return;
+    let paused = false;
+    root.addEventListener('mouseenter', () => (paused = true));
+    root.addEventListener('mouseleave', () => (paused = false));
+    root.addEventListener('focusin', () => (paused = true));
+    root.addEventListener('focusout', () => (paused = false));
+    setInterval(() => !paused && move(1), interval);
+  });
+</script>
